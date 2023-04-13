@@ -1,0 +1,198 @@
+#!/bin/bash
+
+#1o erwthma-------------------------------------------
+if (( $# == 0  ||  $# >= 4 ))   ; then
+ 
+	  echo " Error "
+	  echo 
+	  echo  "Try again and follow the instuctions above"
+	  echo 	"Type -a to add name, surname, town, number"
+	  echo  "Type -l to  show non empty lines"
+	  echo  "Type -s and the number of column you want to sort "
+	  echo  "Type -c and one more argument to check if there is a matching string "
+	  echo  "Type -d then one argument and then -b or -r "
+	  echo  "Type -n to show the number of empty lines"
+fi 
+
+if  [ $1 != "-a"  -a  $1 != "-l" -a $1 != "-s" -a $1 != "-c" -a $1 != "-d" -a $1 != "-n" ] ; then 
+	  echo " Error "
+	  echo 
+	  echo  "Try again and follow the instuctions above"
+	  echo 	"Type -a to add name, surname, town, number"
+	  echo  "Type -l to  show non empty lines"
+	  echo  "Type -s and the number of column you want to sort "
+	  echo  "Type -c and one more argument to check if there is a matching string "
+	  echo  "Type -d then one argument and then -b or -r "
+	  echo  "Type -n to show the number of empty lines"
+fi
+	
+	if [  "$1" == "-a" ] ; then
+	  if (( $# != 1 )); then
+	    echo "You shouldnt give any other argument after -a !"
+	    exit 1
+	  fi			
+		echo "Give name"
+		read name
+		echo "Give surname"
+		read surname
+		echo "Give town "
+		read town
+		echo "Give number"
+		read number
+
+		touch katalogos
+		echo $name $surname $town $number >>katalogos
+
+#2o erwthma-------------------------------------------
+
+	elif [  "$1" == "-l" ] ; then
+
+	   if (( $# != 1 )); then
+	    echo "You shouldnt give any other argument after -l !"
+	    exit 1
+	  fi	
+		echo "-----------------------------"
+		
+		cat katalogos | sed '/^\s*$/d'| cat -n
+
+
+#3o erwthma-------------------------------------------
+
+	elif [ "$1" == "-s" ] ; then
+	   if (( $# != 2 )); then
+	    echo "You should give only one argument after -s !"
+	    exit 1
+	  fi		
+		echo "-----------------------------"
+		echo "Type -s followed by number"
+		cat katalogos | sort -k $2
+
+#4o erwthma-------------------------------------------
+	 
+	elif [ "$1" == "-c" ] ; then 
+		
+	   if (( $# != 2 )); then
+	    echo "You should give only one argument after -c !"
+	    exit 1
+	  fi		
+		echo "------------------------------"
+		if grep   $2  katalogos ; then 	
+		
+			echo 
+			echo "A match was found"
+		    	 
+		 else 
+			echo "Didnt find any match"
+		
+		 fi
+		
+		
+
+#5o erwthma-------------------------------------------
+
+		elif [ "$1" == "-d" ] ; then
+
+		 if (( $# != 3 )); then
+	          echo "You should give two more arguments after -c !"
+	          exit 1
+	         fi		
+
+			if grep  -P ''$2'.*? ' katalogos ; then 
+				
+				echo " A match was found "
+				echo "---------------------------"
+					if [ "$3" == "-r" ] ; then     
+						sed -i ' /'$2'/d ' katalogos 
+					    	cat katalogos
+									
+					
+					
+				elif [ "$3" == "-b" ] ; then
+					sed -i ' /'$2'/c\ ' katalogos 
+					
+					cat katalogos
+				
+				fi
+			else 
+				echo "Didnt find any match"
+				exit 1 
+			fi
+
+#6o erwthma-------------------------------------------
+
+	elif [ "$1" == "-n" ] ; then 
+           if (( $# != 1 )); then
+	    echo "You shouldnt give any other argument after -n !"
+	    exit 1
+	   fi
+		grep -cvP '\S' katalogos | cat katalogos
+		echo "Do you want to delete empty lines? (yes/no)" 
+		echo 
+		read answer 
+		echo "--------------------------------------"
+		echo 
+			if [ "$answer" == "yes" ] ; then 
+				sed -i '/^$/d' katalogos 
+				cat katalogos
+
+			else 
+				exit 1
+			fi
+		
+			
+
+	else	
+		exit 1
+
+	fi
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

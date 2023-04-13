@@ -1,0 +1,92 @@
+#!/bin/bash
+
+check=0
+echo -n "Παρακαλώ,πληκτρολογήστε τον κωδικό της κάρτας:"
+read number
+
+
+check=`cat /home/alekos/Desktop/ATM.txt | awk ''$number'==$1 {print $2" "$3}' | wc -l`
+
+
+if [[ $check -eq 0 ]]; then
+    echo "Εrror"
+    exit 1
+else
+      cat /home/alekos/Desktop/ATM.txt | awk ''$number'==$1 {print $2" "$3}'
+fi
+
+
+again=y
+while [ "$again" = y ]
+do
+
+
+    echo -e "\nΓια Υπόλοιπο πιέστε(Υ)
+    Για Ανάληψη πιέστε(Α)
+    Για Κατάθεση πιέστε(Κ) :"
+    read answer
+
+
+    case $answer in
+
+    Y)
+        cat /home/alekos/Desktop/ATM.txt | awk ''$number'==$1 {print $5}'
+    ;;
+
+
+    A)
+        echo -e "\nΔώστε το ποσό για Ανάληψη:"
+        read an
+        money=`cat /home/alekos/Desktop/ATM.txt | awk ''$number'==$1 {print $5}'`
+
+
+        if [[ $money -lt $an ]]; then
+            echo "Μη επαρκές υπόλοιπο"
+
+        elif [[ $an -gt 1000 ]]; then
+            echo "Δεν μπορεί να δοθεί τόσο μεγάλο ποσό"
+
+        elif [[ $(($an % 20)) -ne 0 ]]; then
+            echo "μπορεί να δοθεί σε χαρτονομίσματα μόνο ποσό πολλαπλάσιο των 20€"
+
+        else
+            if [[ $(($an % 50)) -eq 0 ]]; then
+                xar50=$((an / 50));
+                echo "Το ποσό δίνεται σε $xar50 χαρτονομίσματα των 50 ευρώ"
+
+            else
+                xar50=$((2*(an / 100)))
+                up=$((an % 100))
+                xar20=$((up / 20))
+
+                echo -e "\nΤο ποσό δίνεται σε:"
+                echo -e "$xar50 χαρτονομίσματα των 50 ευρώ"
+                echo -e "$xar20 χαρτονομίσματα των 20 ευρώ"
+            fi
+            awk ''$number'==$1 {$5-='$an'}1' ./ATM.txt > tmp && mv tmp ./ATM.txt
+            exit 1
+        fi
+    ;;
+
+    K)
+        echo -e "\nΔώστε το ποσό για Κατάθεση"
+         read kat
+
+        awk ''$number'==$1 {$5+='$kat'}1' ./ATM.txt > tmp && mv tmp ./ATM.txt
+          echo -e "\nΗ συναλλαγή σας ολοκληρώθηκε!"
+
+
+    ;;
+
+    *)
+        echo "Λάθος χαρακτήρας!"
+    esac
+
+
+    echo -e "Θέλεις να συνεχίσεις?(y/n):"
+    read again
+
+done
+
+echo "Ολοκλήρωση συναλλαγής!"
+exit 0

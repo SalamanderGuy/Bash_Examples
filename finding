@@ -1,0 +1,72 @@
+#!/bin/bash
+answer="y"
+if [[ $# -ne 2 ]]; then
+    echo "you did not give 2 arguments"
+    exit 1
+fi
+
+totalcount1=0
+totalcount2=0
+totalcount3=0
+totalcount4=0
+totalcount5=0
+
+while [ "$answer" == "y" ]
+do
+    echo "type directory name"
+    read filename
+
+    echo
+    echo "1:======================"
+    echo "Αρχεία του δέντρου με δικαιώματα $1:"
+    count1=`find $filename -type f -perm $1 | wc -l`
+    echo "πλήθος αρχείων: $count1"
+    echo
+    find $filename -type f -perm $1 -ls
+
+    echo
+    echo "2:======================"
+    echo "Αρχεία του δέντρου που άλλαξαν περιεχόμενα τις $2 τελευταίες μέρες:"
+    count2=`find $filename -type f -mtime -$2 | wc -l`
+    echo "πλήθος αρχείων: $count2"
+    echo
+    find $filename -type f -mtime -$2 -ls
+
+    echo
+    echo "3:======================"
+    echo "Υποκατάλογοι του δέντρου που προσπελάστηκαν τις $2 τελευταίες μέρες:"
+    count3=`find $filename -type d -mtime -$2 | wc -l`
+    echo "πλήθος καταλόγων: $count3"
+    echo
+    find $filename -type d -mtime -$2 -ls
+
+    echo
+    echo "4:======================"
+    echo "Αρχεία του δέντρου τύπου pipe/socket:"
+    count4=`find $filename -type p -o -type s | wc -l`
+    echo "πλήθος αρχείων: $count4"
+    echo
+    find $filename -type p -o -type s
+
+    echo
+    echo "5:======================"
+    echo "Κενά αρχεία του καταλόγου $filename:"
+    count5=`find $filename -maxdepth 1 -type f -empty | wc -l`
+    echo "πλήθος αρχείων: $count5"
+    echo
+    find $filename -maxdepth 1 -type f -empty -ls
+
+    echo
+    echo "Continue? (y/n)"
+    read answer
+    totalcount1=$(($totalcount1+$count1))
+    totalcount2=$(($totalcount2+$count2))
+    totalcount3=$(($totalcount3+$count3))
+    totalcount4=$(($totalcount4+$count4))
+    totalcount5=$(($totalcount5+$count5))
+done
+echo "#1 συνολικό πλήθος: $totalcount1"
+echo "#2 συνολικό πλήθος: $totalcount2"
+echo "#3 συνολικό πλήθος: $totalcount3"
+echo "#4 συνολικό πλήθος: $totalcount4"
+echo "#5 συνολικό πλήθος: $totalcount5"

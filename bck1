@@ -1,0 +1,48 @@
+#!/bin/bash
+
+
+
+  if (( $#==2 || $#==1 )) ; then
+   echo "	ERROR !!!"
+   echo
+   echo "	Give 3 or 4 arguments (username,directory or file,directory or file,time)"
+   echo 
+   echo "         	OR"
+   echo
+   echo "	Give no arguments " 
+   exit 1
+ fi 
+ 
+	username=$1 
+	k=$3
+ if (( $#==4 )) ; then
+  at $4
+   {
+    if [ -d "${k}" ] ; then  #ελεγχοσ αν ειναι directory
+	
+	tar -czf $3/"$2".tar $2
+	exit 1
+    elif [ -f "${k}" ]; then  #ελεγχοσ αν ειναι file
+	cat $2 >> $3
+	exit 1
+    else
+        echo "${k} not such file or directory!!";
+        exit 1
+    fi
+   }
+ fi
+
+    if [ -d "${k}" ] ; then  #ελεγχοσ αν ειναι directory
+	
+	tar -czf $3/"$2".tar $2
+	elif [ -f "${k}" ]; then  #ελεγχοσ αν ειναι file
+	
+	
+       cat $2 >> $3
+    else
+        echo "${k} not such file or directory!!";
+        exit 1
+    fi
+
+		
+
